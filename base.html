@@ -1,0 +1,393 @@
+<html lang="ru" class="scroll-smooth"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Minimal AI — Меньше ухода, лучше кожа</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Custom scrollbar for inner containers */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Navigation & Routing Styles */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-active {
+            display: block !important;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        .page-hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-[#FAFAFA] text-neutral-800 selection:bg-neutral-200">
+
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 bg-[#FAFAFA]/80 backdrop-blur-md border-b border-neutral-200/50">
+        <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+            <a href="#analysis" class="flex items-center gap-2 text-neutral-900 hover:opacity-80 transition-opacity">
+                <iconify-icon icon="solar:leaf-linear" class="text-xl"></iconify-icon>
+                <span class="font-semibold tracking-tighter text-sm uppercase">Skin Minimal AI</span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-8 text-sm text-neutral-500 font-medium">
+                <a href="#analysis" data-page="analysis" class="nav-link text-neutral-900 font-semibold transition-colors">Анализ</a>
+                <a href="#history" data-page="history" class="nav-link hover:text-neutral-900 transition-colors">История</a>
+                <a href="#about" data-page="about" class="nav-link hover:text-neutral-900 transition-colors">О приложении</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <!-- Mobile Menu Icon (Visual only) -->
+                <button class="md:hidden text-neutral-600">
+                    <iconify-icon icon="solar:hamburger-menu-linear" class="text-xl"></iconify-icon>
+                </button>
+                <button class="hidden md:block text-sm font-medium bg-neutral-900 text-white px-4 py-1.5 rounded-full hover:bg-neutral-800 transition-colors">
+                    Войти
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 pt-16 pb-32">
+        
+        <!-- PAGE 1: ANALYSIS (Default) -->
+        <div id="analysis" class="page-section page-active">
+            <!-- Hero Section -->
+            <section class="text-center max-w-3xl mr-auto mb-20 ml-auto pt-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50/50 text-blue-600 text-xs font-medium mb-6 ring-1 ring-blue-100/50">
+                    <iconify-icon icon="solar:magic-stick-3-linear" class=""></iconify-icon>
+                    AI Дерматологический ассистент
+                </div>
+                <h1 class="md:text-5xl lg:text-6xl leading-tight text-4xl font-semibold text-neutral-900 tracking-tight mb-6">Меньше ухода — <br class="hidden sm:block"> лучше кожа.</h1>
+                <p class="text-base md:text-lg text-neutral-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    Интеллектуальная система анализирует вашу рутину, выявляет риск перегрузки и помогает подобрать минимальный, но эффективный уход для чувствительной кожи.
+                </p>
+            </section>
+
+            <!-- App Interface Preview Showcase -->
+            <div class="relative">
+                <div class="absolute inset-0 -z-10 bg-gradient-to-b from-blue-50/20 via-transparent to-transparent blur-3xl rounded-3xl"></div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- LEFT COLUMN (Input Form) -->
+                    <div class="lg:col-span-5 flex flex-col gap-6">
+                        <div class="bg-white rounded-2xl p-6 md:p-8 ring-1 ring-neutral-900/5 shadow-sm">
+                            <div class="flex items-center gap-3 mb-8">
+                                <div class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600">
+                                    <iconify-icon icon="solar:document-text-linear" class="text-lg"></iconify-icon>
+                                </div>
+                                <h2 class="text-lg font-semibold tracking-tight text-neutral-900">Ввод данных</h2>
+                            </div>
+
+                            <!-- Skin Type -->
+                            <div class="mb-8">
+                                <label class="block text-sm font-medium text-neutral-700 mb-3">Тип кожи</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="skin_type" class="peer sr-only" checked="">
+                                        <div class="px-4 py-2.5 text-sm text-center rounded-xl border border-neutral-200 text-neutral-600 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900 transition-all">Сухая</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="skin_type" class="peer sr-only">
+                                        <div class="px-4 py-2.5 text-sm text-center rounded-xl border border-neutral-200 text-neutral-600 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900 transition-all">Жирная</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="skin_type" class="peer sr-only">
+                                        <div class="px-4 py-2.5 text-sm text-center rounded-xl border border-neutral-200 text-neutral-600 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900 transition-all">Комби</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="skin_type" class="peer sr-only">
+                                        <div class="px-4 py-2.5 text-sm text-center rounded-xl border border-neutral-200 text-neutral-600 peer-checked:bg-neutral-900 peer-checked:text-white peer-checked:border-neutral-900 transition-all">Чувствит.</div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Current Products -->
+                            <div class="mb-8">
+                                <div class="flex items-center justify-between mb-3">
+                                    <label class="block text-sm font-medium text-neutral-700">Текущий уход</label>
+                                    <span class="text-xs text-neutral-400">3 продукта</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between p-3 rounded-xl bg-neutral-50 border border-neutral-100">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-blue-500">
+                                                <iconify-icon icon="solar:drop-linear"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm font-medium text-neutral-900">Мягкое очищение</div>
+                                                <div class="text-xs text-neutral-500">Ежедневно, Утро/Вечер</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 rounded-xl bg-neutral-50 border border-neutral-100">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-rose-500">
+                                                <iconify-icon icon="solar:test-tube-linear"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm font-medium text-neutral-900">Сыворотка BHA 2%</div>
+                                                <div class="text-xs text-neutral-500">Ежедневно, Вечер</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="w-full py-2.5 text-sm text-neutral-500 font-medium rounded-xl border border-dashed border-neutral-300 hover:border-neutral-400 hover:text-neutral-700 transition-colors flex items-center justify-center gap-2">
+                                        <iconify-icon icon="solar:add-circle-linear"></iconify-icon>
+                                        Добавить продукт
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Symptoms -->
+                            <div class="mb-8">
+                                <label class="block text-sm font-medium text-neutral-700 mb-3">Симптомы (выберите)</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-200/50 cursor-pointer">Покраснение</span>
+                                    <span class="px-3 py-1.5 rounded-lg text-xs font-medium bg-neutral-100 text-neutral-600 ring-1 ring-inset ring-neutral-200/50 cursor-pointer hover:bg-neutral-200 transition-colors">Акне</span>
+                                    <span class="px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200/50 cursor-pointer">Сухость</span>
+                                    <span class="px-3 py-1.5 rounded-lg text-xs font-medium bg-neutral-100 text-neutral-600 ring-1 ring-inset ring-neutral-200/50 cursor-pointer hover:bg-neutral-200 transition-colors">Шелушение</span>
+                                </div>
+                            </div>
+
+                            <button onclick="alert('Анализ запущен!')" class="w-full py-3 bg-neutral-900 text-white rounded-xl text-sm font-medium hover:bg-neutral-800 transition-colors shadow-sm">
+                                Проанализировать уход
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN (Results & Tracking) -->
+                    <div class="lg:col-span-7 flex flex-col gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Analysis Result Screen -->
+                            <div class="bg-white rounded-2xl p-6 ring-1 ring-neutral-900/5 shadow-sm flex flex-col h-full">
+                                <h3 class="text-sm font-medium text-neutral-500 mb-6">Результат анализа</h3>
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="relative flex items-center justify-center w-16 h-16 rounded-full border-4 border-amber-100">
+                                        <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                            <path class="text-amber-500" stroke-dasharray="70, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+                                        </svg>
+                                        <iconify-icon icon="solar:danger-triangle-linear" class="text-xl text-amber-500"></iconify-icon>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-neutral-500">Риск перегрузки</div>
+                                        <div class="text-lg font-semibold tracking-tight text-neutral-900">Повышенный</div>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-neutral-600 mb-6 leading-relaxed flex-grow">
+                                    Кожный барьер ослаблен. Ежедневное использование BHA кислот в сочетании с чувствительным типом кожи вызывает сухость и покраснение.
+                                </p>
+                                <div class="p-4 rounded-xl bg-neutral-50 border border-neutral-100">
+                                    <div class="flex items-start gap-2">
+                                        <iconify-icon icon="solar:info-circle-linear" class="text-neutral-400 mt-0.5"></iconify-icon>
+                                        <div>
+                                            <div class="text-sm font-medium text-neutral-900 mb-1">Рекомендация AI</div>
+                                            <div class="text-xs text-neutral-600">Уберите активные компоненты на 14 дней. Оставьте только базу для восстановления барьера.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Minimal Routine Screen -->
+                            <div class="bg-white rounded-2xl p-6 ring-1 ring-neutral-900/5 shadow-sm flex flex-col h-full">
+                                <h3 class="text-sm font-medium text-neutral-500 mb-6">Ваш минимальный уход</h3>
+                                <div class="space-y-6 flex-grow">
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                                            <span class="text-xs font-semibold tracking-wider text-emerald-700 uppercase">Оставить</span>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center gap-3 p-2.5 rounded-lg bg-emerald-50/50 border border-emerald-100/50">
+                                                <iconify-icon icon="solar:check-circle-linear" class="text-emerald-500 text-lg"></iconify-icon>
+                                                <span class="text-sm text-neutral-800">Мягкое очищение</span>
+                                            </div>
+                                            <div class="flex items-center gap-3 p-2.5 rounded-lg bg-emerald-50/50 border border-emerald-100/50">
+                                                <iconify-icon icon="solar:check-circle-linear" class="text-emerald-500 text-lg"></iconify-icon>
+                                                <span class="text-sm text-neutral-800">Базовый крем (керамиды)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
+                                            <span class="text-xs font-semibold tracking-wider text-rose-700 uppercase">Убрать (на 2 недели)</span>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center gap-3 p-2.5 rounded-lg bg-rose-50/50 border border-rose-100/50 opacity-75">
+                                                <iconify-icon icon="solar:close-circle-linear" class="text-rose-500 text-lg"></iconify-icon>
+                                                <span class="text-sm text-neutral-800 line-through decoration-rose-300">Сыворотка BHA 2%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Screen -->
+                        <div class="bg-white rounded-2xl p-6 ring-1 ring-neutral-900/5 shadow-sm">
+                            <div class="flex items-center justify-between mb-8">
+                                <h3 class="text-sm font-medium text-neutral-500">Трекинг восстановления</h3>
+                                <div class="text-xs font-medium px-2 py-1 rounded bg-neutral-100 text-neutral-600">День 4 из 14</div>
+                            </div>
+                            <div class="flex items-end justify-between h-24 mb-8 px-2">
+                                <div class="w-[10%] flex flex-col items-center gap-2">
+                                    <div class="w-full bg-rose-100 rounded-t-sm h-[30%]"></div>
+                                    <span class="text-[10px] text-neutral-400">Пн</span>
+                                </div>
+                                <div class="w-[10%] flex flex-col items-center gap-2">
+                                    <div class="w-full bg-rose-100 rounded-t-sm h-[40%]"></div>
+                                    <span class="text-[10px] text-neutral-400">Вт</span>
+                                </div>
+                                <div class="w-[10%] flex flex-col items-center gap-2">
+                                    <div class="w-full bg-amber-100 rounded-t-sm h-[60%]"></div>
+                                    <span class="text-[10px] text-neutral-400">Ср</span>
+                                </div>
+                                <div class="w-[10%] flex flex-col items-center gap-2 relative">
+                                    <div class="absolute -top-6 text-[10px] font-medium text-neutral-600 bg-white px-1.5 py-0.5 rounded shadow-sm ring-1 ring-neutral-200">Сегодня</div>
+                                    <div class="w-full bg-emerald-200 rounded-t-sm h-[75%]"></div>
+                                    <span class="text-[10px] text-neutral-900 font-medium">Чт</span>
+                                </div>
+                                <div class="w-[10%] flex flex-col items-center gap-2 opacity-30">
+                                    <div class="w-full bg-neutral-100 rounded-t-sm h-[20%]"></div>
+                                    <span class="text-[10px] text-neutral-400">Пт</span>
+                                </div>
+                                <div class="w-[10%] flex flex-col items-center gap-2 opacity-30">
+                                    <div class="w-full bg-neutral-100 rounded-t-sm h-[20%]"></div>
+                                    <span class="text-[10px] text-neutral-400">Сб</span>
+                                </div>
+                                <div class="w-[10%] flex flex-col items-center gap-2 opacity-30">
+                                    <div class="w-full bg-neutral-100 rounded-t-sm h-[20%]"></div>
+                                    <span class="text-[10px] text-neutral-400">Вс</span>
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-neutral-100">
+                                <p class="text-sm font-medium text-center text-neutral-900 mb-4">Как чувствует себя кожа сегодня?</p>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button class="flex flex-col items-center gap-2 p-3 rounded-xl border border-neutral-200 hover:bg-neutral-50 transition-colors">
+                                        <iconify-icon icon="solar:sad-circle-linear" class="text-xl text-neutral-400"></iconify-icon>
+                                        <span class="text-xs text-neutral-600 font-medium">Хуже</span>
+                                    </button>
+                                    <button class="flex flex-col items-center gap-2 p-3 rounded-xl border border-neutral-200 hover:bg-neutral-50 transition-colors">
+                                        <iconify-icon icon="solar:emoji-funny-circle-linear" class="text-xl text-neutral-400"></iconify-icon>
+                                        <span class="text-xs text-neutral-600 font-medium">Без изменений</span>
+                                    </button>
+                                    <button class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50/30 transition-colors">
+                                        <iconify-icon icon="solar:smile-circle-linear" class="text-xl text-emerald-500"></iconify-icon>
+                                        <span class="text-xs text-emerald-700 font-medium">Лучше</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 2: HISTORY -->
+        <div id="history" class="page-section page-hidden max-w-2xl mx-auto pt-8">
+            <h2 class="text-2xl font-semibold tracking-tight text-neutral-900 mb-8">История анализов</h2>
+            <div class="p-12 rounded-2xl bg-white ring-1 ring-neutral-900/5 shadow-sm text-center flex flex-col items-center justify-center min-h-[400px]">
+                <div class="w-16 h-16 rounded-full bg-neutral-50 flex items-center justify-center mb-4 ring-1 ring-neutral-100">
+                    <iconify-icon icon="solar:history-linear" class="text-2xl text-neutral-400"></iconify-icon>
+                </div>
+                <h3 class="text-base font-medium text-neutral-900 mb-2">Нет сохраненных результатов</h3>
+                <p class="text-neutral-500 text-sm max-w-sm">Здесь будут ваши прошлые результаты. Пройдите первый анализ, чтобы начать отслеживать прогресс вашей кожи.</p>
+                <a href="#analysis" class="mt-8 px-6 py-2.5 bg-neutral-900 text-white rounded-xl text-sm font-medium hover:bg-neutral-800 transition-colors shadow-sm inline-flex items-center gap-2">
+                    Перейти к анализу
+                    <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
+                </a>
+            </div>
+        </div>
+
+        <!-- PAGE 3: ABOUT -->
+        <div id="about" class="page-section page-hidden max-w-2xl mx-auto pt-8">
+            <h2 class="text-2xl font-semibold tracking-tight text-neutral-900 mb-8">О приложении</h2>
+            <div class="p-8 md:p-10 rounded-2xl bg-white ring-1 ring-neutral-900/5 shadow-sm">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-6 text-blue-600">
+                    <iconify-icon icon="solar:magic-stick-3-linear" class="text-2xl"></iconify-icon>
+                </div>
+                <h3 class="text-lg font-semibold text-neutral-900 mb-4">Философия Skin Minimal AI</h3>
+                <p class="text-neutral-600 leading-relaxed text-sm md:text-base mb-6">
+                    Skin Minimal AI помогает сократить уход за кожей до минимально необходимого и избежать перегрузки активными компонентами. Мы верим, что здоровая кожа не нуждается в десятках баночек.
+                </p>
+                <div class="space-y-4 pt-6 border-t border-neutral-100">
+                    <div class="flex items-start gap-3">
+                        <iconify-icon icon="solar:shield-check-linear" class="text-emerald-500 text-xl mt-0.5"></iconify-icon>
+                        <div>
+                            <div class="text-sm font-medium text-neutral-900">Защита барьера</div>
+                            <div class="text-sm text-neutral-500">Алгоритмы настроены на предотвращение повреждения гидролипидной мантии.</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <iconify-icon icon="solar:leaf-linear" class="text-emerald-500 text-xl mt-0.5"></iconify-icon>
+                        <div>
+                            <div class="text-sm font-medium text-neutral-900">Минимализм</div>
+                            <div class="text-sm text-neutral-500">Только доказанные базовые комбинации ухода без лишних трат.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Routing Script -->
+    <script>
+        function handleRouting() {
+            // Get current hash, default to 'analysis'
+            const hash = window.location.hash.substring(1) || 'analysis';
+            
+            // Validate if hash matches any of our pages, fallback to 'analysis'
+            const validPages = ['analysis', 'history', 'about'];
+            const targetPage = validPages.includes(hash) ? hash : 'analysis';
+
+            // Handle Sections Visibility
+            document.querySelectorAll('.page-section').forEach(section => {
+                if (section.id === targetPage) {
+                    section.classList.remove('page-hidden');
+                    section.classList.add('page-active');
+                } else {
+                    section.classList.remove('page-active');
+                    section.classList.add('page-hidden');
+                }
+            });
+
+            // Handle Navigation Links Active State
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.dataset.page === targetPage) {
+                    link.classList.remove('text-neutral-500', 'font-medium');
+                    link.classList.add('text-neutral-900', 'font-semibold');
+                } else {
+                    link.classList.remove('text-neutral-900', 'font-semibold');
+                    link.classList.add('text-neutral-500', 'font-medium');
+                }
+            });
+            
+            // Scroll to top on page change
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Listen for hash changes (when user clicks links or uses back/forward buttons)
+        window.addEventListener('hashchange', handleRouting);
+        
+        // Run on initial load
+        window.addEventListener('DOMContentLoaded', handleRouting);
+    </script>
+
+</body></html>
