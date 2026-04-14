@@ -17,22 +17,22 @@ export default {
   },
 };
 
-export const Analysis = {};
+export const Home = {};
 
-export const History = {
+export const Analysis = {
   decorators: [
     (Story) => (
-      <MemoryRouter initialEntries={["/history"]}>
+      <MemoryRouter initialEntries={["/analysis"]}>
         <Story />
       </MemoryRouter>
     ),
   ],
 };
 
-export const About = {
+export const History = {
   decorators: [
     (Story) => (
-      <MemoryRouter initialEntries={["/about"]}>
+      <MemoryRouter initialEntries={["/history"]}>
         <Story />
       </MemoryRouter>
     ),

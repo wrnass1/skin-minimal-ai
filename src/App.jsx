@@ -56,9 +56,9 @@ function Header() {
         </NavLink>
 
         <nav className="desktop-nav" aria-label="Основная навигация">
-          <AppNavLink to="/">Анализ</AppNavLink>
+          <AppNavLink to="/">Главная</AppNavLink>
+          <AppNavLink to="/analysis">Анализ</AppNavLink>
           <AppNavLink to="/history">История</AppNavLink>
-          <AppNavLink to="/about">О приложении</AppNavLink>
         </nav>
 
         <div className="topbar-actions">
@@ -85,6 +85,61 @@ function AppNavLink({ to, children }) {
     >
       {children}
     </NavLink>
+  );
+}
+
+function HomePage() {
+  return (
+    <div className="page page-active">
+      <section className="home-hero">
+        <div className="home-hero-inner">
+          <div className="eyebrow eyebrow-lg">
+            <Icon name="magic" />
+            <span>AI Дерматологический ассистент</span>
+          </div>
+          <h1 className="home-title">
+            Меньше ухода — <br /> лучше кожа.
+          </h1>
+          <p className="home-lead">
+            Интеллектуальная система анализирует вашу рутину, выявляет риск перегрузки и помогает
+            подобрать минимальный, но эффективный уход для чувствительной кожи.
+          </p>
+        </div>
+      </section>
+
+      <section className="home-about">
+        <div className="home-about-head">
+          <h2 className="home-h2">Философия Skin Minimal AI</h2>
+          <p>
+            Skin Minimal AI помогает сократить уход за кожей до минимально необходимого и избежать
+            перегрузки активными компонентами. Мы верим, что здоровая кожа не нуждается в десятках
+            баночек.
+          </p>
+        </div>
+
+        <div className="home-grid">
+          <div className="card home-feature">
+            <div className="home-feature-icon tone-emerald" aria-hidden="true">
+              <Icon name="shield" />
+            </div>
+            <h3>Защита барьера</h3>
+            <p>
+              Подсказки ориентированы на снижение раздражения и восстановление кожи без резких шагов.
+            </p>
+          </div>
+
+          <div className="card home-feature">
+            <div className="home-feature-icon tone-emerald" aria-hidden="true">
+              <Icon name="leaf" />
+            </div>
+            <h3>Минимализм</h3>
+            <p>
+              Только базовые комбинации ухода, чтобы убрать лишнее и снизить риск реакции кожи.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -149,21 +204,10 @@ function AnalysisPage() {
 
   return (
     <div className="page page-active">
-      <section className="hero">
-        <div className="eyebrow">
-          <Icon name="magic" />
-          <span>AI Дерматологический ассистент</span>
-        </div>
-        <h1>
-          Меньше ухода,
-          <br />
-          лучше кожа.
-        </h1>
-        <p>
-          Интеллектуальная система анализирует вашу рутину, выявляет риск перегрузки
-          и помогает подобрать минимальный, но эффективный уход для чувствительной кожи.
-        </p>
-      </section>
+      <div className="page-intro">
+        <h2>Анализ ухода</h2>
+        <p>Проанализируйте свою кожу и получите персональную рекомендацию.</p>
+      </div>
 
       <div className="analysis-grid">
         <section className="card input-card">
@@ -375,47 +419,10 @@ function HistoryPage() {
           ))}
         </div>
 
-        <NavLink to="/" className="primary-button inline-button">
+        <NavLink to="/analysis" className="primary-button inline-button">
           Перейти к анализу
           <Icon name="arrow" />
         </NavLink>
-      </div>
-    </section>
-  );
-}
-
-function AboutPage() {
-  return (
-    <section className="narrow-page">
-      <h2>О приложении</h2>
-      <div className="card about-card">
-        <div className="about-icon">
-          <Icon name="magic" />
-        </div>
-        <h3>Философия Skin Minimal AI</h3>
-        <p>
-          Skin Minimal AI помогает сократить уход за кожей до минимально необходимого и
-          избежать перегрузки активными компонентами. Фокус приложения не на количестве
-          баночек, а на устойчивом состоянии кожного барьера.
-        </p>
-
-        <div className="feature-list">
-          <div className="feature-item">
-            <Icon name="shield" className="feature-icon" />
-            <div>
-              <strong>Защита барьера</strong>
-              <p>Подсказки ориентированы на снижение раздражения и восстановление кожи.</p>
-            </div>
-          </div>
-
-          <div className="feature-item">
-            <Icon name="leaf" className="feature-icon" />
-            <div>
-              <strong>Минимализм</strong>
-              <p>В интерфейсе и логике остаются только базовые, понятные шаги ухода.</p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -427,9 +434,9 @@ export default function App() {
       <Header />
       <main className="container main-content">
         <Routes>
-          <Route path="/" element={<AnalysisPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/analysis" element={<AnalysisPage />} />
           <Route path="/history" element={<HistoryPage />} />
-          <Route path="/about" element={<AboutPage />} />
         </Routes>
       </main>
     </div>
