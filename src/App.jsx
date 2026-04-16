@@ -18,7 +18,7 @@ const toneClassMap = {
 };
 
 const iconMap = {
-  leaf: "◌",
+  leaf: "✦",
   magic: "✦",
   menu: "≡",
   document: "▣",
@@ -32,7 +32,7 @@ const iconMap = {
   close: "×",
   arrow: "→",
   history: "⟲",
-  shield: "◍",
+  shield: "✧",
   smile: "☺",
   meh: "•",
   sad: "☹",
@@ -209,13 +209,19 @@ function AnalysisPage() {
         <p>Проанализируйте свою кожу и получите персональную рекомендацию.</p>
       </div>
 
-      <div className="analysis-grid">
-        <section className="card input-card">
-          <div className="section-heading">
-            <div className="section-icon">
-              <Icon name="document" />
+      <div className="analysis-steps" aria-label="Этапы анализа">
+        <section className="card stage-card">
+          <div className="stage-heading">
+            <div className="stage-badge" aria-hidden="true">
+              1
             </div>
-            <h2>Ввод данных</h2>
+            <div className="stage-title">
+              <div className="stage-kicker">
+                <Icon name="document" />
+                <span>Ввод данных</span>
+              </div>
+              <h2>Заполните данные</h2>
+            </div>
           </div>
 
           <div className="field-block">
@@ -277,7 +283,7 @@ function AnalysisPage() {
             </div>
           </div>
 
-          <button type="button" className="primary-button full-width" onClick={() => setAnalysisCount((value) => value + 1)}>
+          <button type="button" className="primary-button full-width" style={{ marginTop: 10 }} onClick={() => setAnalysisCount((value) => value + 1)}>
             Проанализировать уход
           </button>
 
@@ -286,75 +292,108 @@ function AnalysisPage() {
           </p>
         </section>
 
-        <div className="results-column">
-          <div className="result-cards">
-            <section className="card">
-              <h3 className="card-title">Результат анализа</h3>
-              <div className="risk-row">
-                <div className="risk-gauge">
-                  <svg viewBox="0 0 36 36" className="risk-svg">
-                    <path
-                      className="risk-track"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                    <path
-                      className="risk-value"
-                      strokeDasharray={`${analysisResult.riskScore}, 100`}
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                  </svg>
-                  <Icon name="warning" className="risk-icon" />
-                </div>
-                <div>
-                  <div className="muted">Риск перегрузки</div>
-                  <div className="risk-label">{analysisResult.riskLabel}</div>
-                </div>
+        <section className="card stage-card">
+          <div className="stage-heading">
+            <div className="stage-badge" aria-hidden="true">
+              2
+            </div>
+            <div className="stage-title">
+              <div className="stage-kicker">
+                <Icon name="warning" />
+                <span>Результат анализа</span>
               </div>
-
-              <p className="card-copy">{analysisResult.summary}</p>
-
-              <div className="info-box">
-                <Icon name="info" className="info-icon" />
-                <div>
-                  <div className="info-title">Рекомендация AI</div>
-                  <div className="info-copy">{analysisResult.recommendation}</div>
-                </div>
-              </div>
-            </section>
-
-            <section className="card">
-              <h3 className="card-title">Ваш минимальный уход</h3>
-              <RoutineList title="Оставить" tone="emerald" icon="check" items={analysisResult.keep} />
-              <RoutineList title="Убрать на 2 недели" tone="rose" icon="close" items={analysisResult.pause} muted />
-            </section>
+              <h2>Риск и рекомендация</h2>
+            </div>
           </div>
 
-          <section className="card">
-            <div className="card-header">
-              <h3 className="card-title">Трекинг восстановления</h3>
-              <span className="chip">День 4 из 14</span>
+          <div className="risk-row">
+            <div className="risk-gauge">
+              <svg viewBox="0 0 36 36" className="risk-svg">
+                <path
+                  className="risk-track"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                <path
+                  className="risk-value"
+                  strokeDasharray={`${analysisResult.riskScore}, 100`}
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+              </svg>
+              <Icon name="warning" className="risk-icon" />
             </div>
-
-            <div className="progress-chart">
-              {recoveryDays.map((entry) => (
-                <div key={entry.day} className={`progress-day ${entry.current ? "progress-current" : ""}`}>
-                  {entry.current ? <span className="today-badge">Сегодня</span> : null}
-                  <div className={`progress-bar ${toneClassMap[entry.state]}`} style={{ height: `${entry.level}%` }} />
-                  <span>{entry.day}</span>
-                </div>
-              ))}
+            <div>
+              <div className="muted">Риск перегрузки</div>
+              <div className="risk-label">{analysisResult.riskLabel}</div>
             </div>
+          </div>
 
-            <div className="tracker-footer">
-              <p>Как чувствует себя кожа сегодня?</p>
-              <div className="tracker-grid">
-                <MoodButton icon="sad" label="Хуже" />
-                <MoodButton icon="meh" label="Без изменений" />
-                <MoodButton icon="smile" label="Лучше" active />
+          <p className="card-copy">{analysisResult.summary}</p>
+
+          <div className="info-box">
+            <Icon name="info" className="info-icon" />
+            <div>
+              <div className="info-title">Рекомендация AI</div>
+              <div className="info-copy">{analysisResult.recommendation}</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="card stage-card">
+          <div className="stage-heading">
+            <div className="stage-badge" aria-hidden="true">
+              3
+            </div>
+            <div className="stage-title">
+              <div className="stage-kicker">
+                <Icon name="check" />
+                <span>Ваш минимальный уход</span>
               </div>
+              <h2>Что оставить и что убрать</h2>
             </div>
-          </section>
-        </div>
+          </div>
+
+          <RoutineList title="Оставить" tone="emerald" icon="check" items={analysisResult.keep} />
+          <RoutineList title="Убрать на 2 недели" tone="rose" icon="close" items={analysisResult.pause} muted />
+        </section>
+
+        <section className="card stage-card">
+          <div className="stage-heading">
+            <div className="stage-badge" aria-hidden="true">
+              4
+            </div>
+            <div className="stage-title">
+              <div className="stage-kicker">
+                <Icon name="history" />
+                <span>Трекинг восстановления</span>
+              </div>
+              <h2>Отмечайте динамику</h2>
+            </div>
+          </div>
+
+          <div className="card-header">
+            <div className="muted">День 4 из 14</div>
+            <span className="chip">Сегодня</span>
+          </div>
+
+          <div className="progress-chart">
+            {recoveryDays.map((entry) => (
+              <div key={entry.day} className={`progress-day ${entry.current ? "progress-current" : ""}`}>
+                {entry.current ? <span className="today-badge">Сегодня</span> : null}
+                <div className={`progress-bar ${toneClassMap[entry.state]}`} style={{ height: `${entry.level}%` }} />
+                <span>{entry.day}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="tracker-footer">
+            <p>Как чувствует себя кожа сегодня?</p>
+            <div className="tracker-grid">
+              <MoodButton icon="sad" label="Хуже" />
+              <MoodButton icon="meh" label="Без изменений" />
+              <MoodButton icon="smile" label="Лучше" active />
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

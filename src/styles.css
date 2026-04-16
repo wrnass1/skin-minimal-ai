@@ -24,6 +24,29 @@ body {
   color: #262626;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url("./assets/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.32;
+  filter: saturate(1.18) contrast(1.08);
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: rgba(250, 250, 250, 0.58);
+  pointer-events: none;
+}
+
 button,
 a {
   font: inherit;
@@ -41,6 +64,8 @@ a {
 
 .app-shell {
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
 .container {
@@ -157,6 +182,14 @@ a {
 
 .full-width {
   width: 100%;
+}
+
+.primary-button.full-width {
+  border-radius: 16px;
+}
+
+.stage-card .primary-button {
+  width: 100%;
   border-radius: 16px;
 }
 
@@ -179,7 +212,7 @@ a {
 
 .page-intro {
   max-width: 760px;
-  margin: 0 0 44px;
+  margin: 0 auto 44px;
 }
 
 .page-intro h2 {
@@ -314,6 +347,61 @@ a {
   grid-template-columns: minmax(320px, 460px) minmax(0, 1fr);
   gap: 24px;
   align-items: start;
+}
+
+.analysis-steps {
+  display: grid;
+  gap: 24px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.stage-card h2 {
+  margin: 6px 0 0;
+  color: #171717;
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+}
+
+.stage-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.stage-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: #171717;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  flex: 0 0 auto;
+}
+
+.stage-title {
+  min-width: 0;
+}
+
+.stage-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #737373;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.stage-kicker .icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #f5f5f5;
+  color: #525252;
 }
 
 .home-grid {
@@ -562,6 +650,11 @@ a {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 12px;
+  max-width: 100%;
+}
+
+.tag {
+  max-width: 100%;
 }
 
 .tag {
