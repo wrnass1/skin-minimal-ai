@@ -10,6 +10,16 @@ const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(file
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      "/api": {
+        // Docker Compose публикует API как localhost:8788 (см. docker-compose.yml).
+        // Локально без Docker: npm run dev:local или VITE_PROXY_TARGET=http://localhost:8787
+        target: process.env.VITE_PROXY_TARGET || "http://localhost:8788",
+        changeOrigin: true,
+      },
+    },
+  },
   test: {
     projects: [{
       extends: true,

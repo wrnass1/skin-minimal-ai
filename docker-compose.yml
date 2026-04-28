@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: skin-minimal-ai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: skin_minimal_ai
+      POSTGRES_USER: skin_minimal_ai
+      POSTGRES_PASSWORD: skin_minimal_ai
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./server/db/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+
+  api:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: skin-minimal-ai-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://skin_minimal_ai:skin_minimal_ai@db:5432/skin_minimal_ai
+      JWT_SECRET: dev-secret-change-me
+      PORT: 8787
+      CLIENT_ORIGIN: http://localhost:5173
+      POLZA_AI_API_KEY: ${POLZA_AI_API_KEY:-}
+      POLZA_MODEL: ${POLZA_MODEL:-openai/gpt-4o-mini}
+    depends_on:
+      - db
+    ports:
+      - "8788:8787"
+    # Только код сервера с хоста; node_modules из образа (npm ci). Не монтируем
+    # /app/node_modules отдельным томом — иначе после добавления зависимостей в образ
+    # контейнер продолжает видеть старый кэш без новых пакетов (например openai).
+    volumes:
+      - ./server:/app/server
+    command: ["node", "server/index.js"]
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skin-minimal-ai-web
+    restart: unless-stopped
+    environment:
+      VITE_PROXY_TARGET: http://api:8787
+    depends_on:
+      - api
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  pgdata:

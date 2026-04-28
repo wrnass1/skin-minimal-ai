@@ -38,3 +38,13 @@ export const History = {
     ),
   ],
 };
+
+export const Auth = {
+  decorators: [
+    (Story) => (
+      <MemoryRouter initialEntries={["/auth"]}>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+};

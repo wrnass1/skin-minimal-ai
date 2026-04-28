@@ -1,12 +1,8 @@
-import { useMemo, useState } from "react";
-import { NavLink, Route, Routes } from "react-router-dom";
-import {
-  historyItems,
-  initialProducts,
-  recoveryDays,
-  skinTypes,
-  symptomsCatalog,
-} from "./data/mockData";
+import { useEffect, useMemo, useState } from "react";
+import { Navigate, NavLink, Route, Routes, useLocation } from "react-router-dom";
+import AuthPage from "./pages/AuthPage";
+import ConsultChatPanel from "./components/ConsultChatPanel";
+import { apiCatalog, apiHistory, apiLogout, apiMe, apiRunAnalysis } from "./auth/api";
 
 const toneClassMap = {
   blue: "tone-blue",
@@ -18,10 +14,10 @@ const toneClassMap = {
 };
 
 const iconMap = {
-  leaf: "✦",
+  leaf: "⁕",
   magic: "✦",
   menu: "≡",
-  document: "▣",
+  document: "🗏",
   drop: "◔",
   tube: "◫",
   spark: "✧",
@@ -46,7 +42,7 @@ function Icon({ name, className = "" }) {
   );
 }
 
-function Header() {
+function Header({ session, onSignOut }) {
   return (
     <header className="topbar">
       <div className="container topbar-inner">
@@ -65,9 +61,20 @@ function Header() {
           <button type="button" className="icon-button mobile-only" aria-label="Меню">
             <Icon name="menu" />
           </button>
-          <button type="button" className="primary-button desktop-only">
-            Войти
-          </button>
+          {session ? (
+            <div className="auth-top desktop-only">
+              <span className="auth-top-email" title={session.email}>
+                {session.email}
+              </span>
+              <button type="button" className="secondary-button sign-out-button" onClick={onSignOut}>
+                Выйти
+              </button>
+            </div>
+          ) : (
+            <NavLink to="/auth" className="primary-button desktop-only">
+              Войти
+            </NavLink>
+          )}
         </div>
       </div>
     </header>
@@ -88,15 +95,31 @@ function AppNavLink({ to, children }) {
   );
 }
 
-function HomePage() {
+function HomePage({ session, onOpenAssistant }) {
   return (
     <div className="page page-active">
       <section className="home-hero">
         <div className="home-hero-inner">
-          <div className="eyebrow eyebrow-lg">
-            <Icon name="magic" />
-            <span>AI Дерматологический ассистент</span>
-          </div>
+          {session ? (
+            <button
+              type="button"
+              className="eyebrow eyebrow-lg home-assistant-cta"
+              onClick={onOpenAssistant}
+              aria-label="Открыть дерматологического ассистента"
+            >
+              <Icon name="magic" />
+              <span>AI Дерматологический ассистент</span>
+            </button>
+          ) : (
+            <NavLink
+              to="/auth"
+              className="eyebrow eyebrow-lg home-assistant-cta"
+              aria-label="Войти, чтобы открыть дерматологического ассистента"
+            >
+              <Icon name="magic" />
+              <span>AI Дерматологический ассистент</span>
+            </NavLink>
+          )}
           <h1 className="home-title">
             Меньше ухода — <br /> лучше кожа.
           </h1>
@@ -130,7 +153,7 @@ function HomePage() {
 
           <div className="card home-feature">
             <div className="home-feature-icon tone-emerald" aria-hidden="true">
-              <Icon name="leaf" />
+              <Icon name="magic" />
             </div>
             <h3>Минимализм</h3>
             <p>
@@ -144,34 +167,51 @@ function HomePage() {
 }
 
 function AnalysisPage() {
-  const [skinType, setSkinType] = useState("Сухая");
+  const [catalog, setCatalog] = useState(null);
+  const [loadingCatalog, setLoadingCatalog] = useState(true);
+  const [catalogError, setCatalogError] = useState("");
+
+  const [skinTypeId, setSkinTypeId] = useState("dry");
   const [selectedSymptoms, setSelectedSymptoms] = useState(["redness", "dryness"]);
-  const [products, setProducts] = useState(initialProducts);
+  const [productIds, setProductIds] = useState(["cleanser_gentle", "exfoliant_bha2", "moisturizer_ceramides"]);
+  const [productToAdd, setProductToAdd] = useState("");
+
+  const [analysisBusy, setAnalysisBusy] = useState(false);
+  const [analysisError, setAnalysisError] = useState("");
   const [analysisCount, setAnalysisCount] = useState(0);
+  const [analysisResult, setAnalysisResult] = useState({
+    riskScore: 70,
+    riskLabel: "Повышенный",
+    summary: "Заполните данные и запустите анализ, чтобы получить результат.",
+    recommendation: "Нажмите «Проанализировать уход».",
+    keep: [],
+    pause: [],
+  });
 
-  const analysisResult = useMemo(() => {
-    const sensitivityBoost = skinType === "Чувствительная" ? 15 : 0;
-    const drynessBoost = selectedSymptoms.includes("dryness") ? 10 : 0;
-    const rednessBoost = selectedSymptoms.includes("redness") ? 10 : 0;
-    const activeOverload = products.some((product) => product.name.includes("BHA")) ? 20 : 0;
-    const riskScore = Math.min(95, 35 + sensitivityBoost + drynessBoost + rednessBoost + activeOverload);
-
-    const riskLabel = riskScore >= 70 ? "Повышенный" : riskScore >= 50 ? "Средний" : "Низкий";
-    const recommendation =
-      riskScore >= 70
-        ? "Уберите активные компоненты на 14 дней. Оставьте мягкое очищение, базовый крем и SPF."
-        : "Снизьте частоту активов и наблюдайте за реакцией кожи в течение недели.";
-
-    const summary =
-      selectedSymptoms.includes("redness") || selectedSymptoms.includes("dryness")
-        ? "Кожный барьер может быть ослаблен: есть признаки раздражения и чувствительности."
-        : "Текущий уход выглядит относительно стабильным, но стоит избегать лишних активов.";
-
-    const keep = products.filter((product) => !product.name.includes("BHA"));
-    const pause = products.filter((product) => product.name.includes("BHA"));
-
-    return { riskScore, riskLabel, recommendation, summary, keep, pause };
-  }, [products, selectedSymptoms, skinType]);
+  useEffect(() => {
+    let alive = true;
+    setLoadingCatalog(true);
+    apiCatalog()
+      .then((res) => {
+        if (!alive) return;
+        if (!res.ok) {
+          setCatalogError(res.error ?? "Не удалось загрузить данные.");
+          return;
+        }
+        setCatalog(res.catalog);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setCatalogError("Не удалось загрузить данные.");
+      })
+      .finally(() => {
+        if (!alive) return;
+        setLoadingCatalog(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const toggleSymptom = (id) => {
     setSelectedSymptoms((current) =>
@@ -182,24 +222,70 @@ function AnalysisPage() {
   };
 
   const addProduct = () => {
-    const variants = [
-      "Успокаивающий тонер",
-      "SPF 50 без отдушек",
-      "Ниацинамид 5%",
-      "Восстанавливающий бальзам",
-    ];
+    if (!catalog?.products?.length) return;
+    const next = catalog.products.find((p) => !productIds.includes(p.id));
+    if (!next) return;
+    setProductIds((current) => [...current, next.id]);
+  };
 
-    const nextName = variants[products.length % variants.length];
-    setProducts((current) => [
-      ...current,
-      {
-        id: Date.now(),
-        name: nextName,
-        schedule: "По необходимости, 1 раз в день",
-        icon: "spark",
-        color: "blue",
-      },
-    ]);
+  const addSelectedProduct = () => {
+    if (!productToAdd) return;
+    if (productIds.includes(productToAdd)) return;
+    setProductIds((current) => [...current, productToAdd]);
+    setProductToAdd("");
+  };
+
+  const removeProduct = (id) => {
+    setProductIds((current) => current.filter((productId) => productId !== id));
+  };
+
+  const clearForm = () => {
+    setSkinTypeId("dry");
+    setSelectedSymptoms([]);
+    setProductIds([]);
+    setProductToAdd("");
+    setAnalysisError("");
+    setAnalysisResult({
+      riskScore: 70,
+      riskLabel: "Повышенный",
+      summary: "Заполните данные и запустите анализ, чтобы получить результат.",
+      recommendation: "Нажмите «Проанализировать уход».",
+      keep: [],
+      pause: [],
+    });
+  };
+
+  const selectedProducts = useMemo(() => {
+    if (!catalog?.products) return [];
+    const map = new Map(catalog.products.map((p) => [p.id, p]));
+    return productIds.map((id) => map.get(id)).filter(Boolean);
+  }, [catalog, productIds]);
+
+  const availableProducts = useMemo(() => {
+    if (!catalog?.products) return [];
+    return catalog.products.filter((p) => !productIds.includes(p.id));
+  }, [catalog, productIds]);
+
+  const run = async () => {
+    setAnalysisError("");
+    setAnalysisBusy(true);
+    try {
+      const res = await apiRunAnalysis({
+        skinTypeId,
+        symptomIds: selectedSymptoms,
+        productIds,
+      });
+      if (!res.ok) {
+        setAnalysisError(res.error ?? "Не удалось выполнить анализ.");
+        return;
+      }
+      setAnalysisResult(res.result);
+      setAnalysisCount((value) => value + 1);
+    } catch {
+      setAnalysisError("Не удалось выполнить анализ.");
+    } finally {
+      setAnalysisBusy(false);
+    }
   };
 
   return (
@@ -227,14 +313,14 @@ function AnalysisPage() {
           <div className="field-block">
             <label className="field-label">Тип кожи</label>
             <div className="option-grid">
-              {skinTypes.map((type) => (
+              {(catalog?.skinTypes ?? []).map((type) => (
                 <button
-                  key={type}
+                  key={type.id}
                   type="button"
-                  className={`choice-button ${skinType === type ? "choice-button-active" : ""}`}
-                  onClick={() => setSkinType(type)}
+                  className={`choice-button ${skinTypeId === type.id ? "choice-button-active" : ""}`}
+                  onClick={() => setSkinTypeId(type.id)}
                 >
-                  {type}
+                  {type.label}
                 </button>
               ))}
             </div>
@@ -243,31 +329,68 @@ function AnalysisPage() {
           <div className="field-block">
             <div className="field-row">
               <label className="field-label">Текущий уход</label>
-              <span className="field-caption">{products.length} продукта</span>
+              <div className="field-actions">
+                <span className="field-caption">{selectedProducts.length} продукта</span>
+                <button type="button" className="link-button" onClick={clearForm}>
+                  Очистить
+                </button>
+              </div>
             </div>
             <div className="product-list">
-              {products.map((product) => (
+              {selectedProducts.map((product) => (
                 <article key={product.id} className="product-item">
-                  <div className={`product-icon ${toneClassMap[product.color]}`}>
+                  <div className={`product-icon ${toneClassMap[product.tone]}`}>
                     <Icon name={product.icon} />
                   </div>
                   <div>
                     <h3>{product.name}</h3>
                     <p>{product.schedule}</p>
                   </div>
+                  <button
+                    type="button"
+                    className="mini-icon-button"
+                    aria-label={`Удалить продукт: ${product.name}`}
+                    onClick={() => removeProduct(product.id)}
+                  >
+                    <Icon name="close" />
+                  </button>
                 </article>
               ))}
-              <button type="button" className="ghost-button" onClick={addProduct}>
-                <Icon name="add" />
-                Добавить продукт
-              </button>
+              <div className="product-add">
+                <select
+                  className="select-input"
+                  value={productToAdd}
+                  onChange={(event) => setProductToAdd(event.target.value)}
+                  aria-label="Выберите продукт"
+                  disabled={loadingCatalog || !availableProducts.length}
+                >
+                  <option value="">{availableProducts.length ? "Выберите продукт…" : "Больше нет продуктов"}</option>
+                  {availableProducts.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={addSelectedProduct}
+                  disabled={!productToAdd}
+                >
+                  Добавить
+                </button>
+                <button type="button" className="ghost-button" onClick={addProduct} disabled={!availableProducts.length}>
+                  <Icon name="add" />
+                  Быстро добавить
+                </button>
+              </div>
             </div>
           </div>
 
           <div className="field-block">
             <label className="field-label">Симптомы</label>
             <div className="tag-list">
-              {symptomsCatalog.map((symptom) => {
+              {(catalog?.symptoms ?? []).map((symptom) => {
                 const active = selectedSymptoms.includes(symptom.id);
                 return (
                   <button
@@ -283,8 +406,18 @@ function AnalysisPage() {
             </div>
           </div>
 
-          <button type="button" className="primary-button full-width" style={{ marginTop: 10 }} onClick={() => setAnalysisCount((value) => value + 1)}>
-            Проанализировать уход
+          {loadingCatalog ? <p className="helper-text">Загрузка данных...</p> : null}
+          {catalogError ? <div className="form-error">{catalogError}</div> : null}
+          {analysisError ? <div className="form-error">{analysisError}</div> : null}
+
+          <button
+            type="button"
+            className="primary-button full-width"
+            style={{ marginTop: 10 }}
+            onClick={run}
+            disabled={analysisBusy || loadingCatalog || !!catalogError}
+          >
+            {analysisBusy ? "Подождите..." : "Проанализировать уход"}
           </button>
 
           <p className="helper-text">
@@ -301,6 +434,11 @@ function AnalysisPage() {
               <div className="stage-kicker">
                 <Icon name="warning" />
                 <span>Результат анализа</span>
+                {analysisResult.ai?.enabled ? (
+                  <span className="chip chip-ai" title="Текст дополнен моделью через Polza.ai">
+                    Polza AI
+                  </span>
+                ) : null}
               </div>
               <h2>Риск и рекомендация</h2>
             </div>
@@ -332,7 +470,9 @@ function AnalysisPage() {
           <div className="info-box">
             <Icon name="info" className="info-icon" />
             <div>
-              <div className="info-title">Рекомендация AI</div>
+              <div className="info-title">
+                {analysisResult.ai?.enabled ? "Рекомендация AI" : "Рекомендация"}
+              </div>
               <div className="info-copy">{analysisResult.recommendation}</div>
             </div>
           </div>
@@ -376,7 +516,7 @@ function AnalysisPage() {
           </div>
 
           <div className="progress-chart">
-            {recoveryDays.map((entry) => (
+            {(catalog?.recoveryDays ?? []).map((entry) => (
               <div key={entry.day} className={`progress-day ${entry.current ? "progress-current" : ""}`}>
                 {entry.current ? <span className="today-badge">Сегодня</span> : null}
                 <div className={`progress-bar ${toneClassMap[entry.state]}`} style={{ height: `${entry.level}%` }} />
@@ -432,6 +572,35 @@ function MoodButton({ icon, label, active = false }) {
 }
 
 function HistoryPage() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    apiHistory()
+      .then((res) => {
+        if (!alive) return;
+        if (!res.ok) {
+          setError(res.error ?? "Не удалось загрузить историю.");
+          return;
+        }
+        setItems(res.items ?? []);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setError("Не удалось загрузить историю.");
+      })
+      .finally(() => {
+        if (!alive) return;
+        setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
     <section className="narrow-page">
       <h2>История анализов</h2>
@@ -446,17 +615,27 @@ function HistoryPage() {
           </div>
         </div>
 
-        <div className="history-list">
-          {historyItems.map((item) => (
-            <article key={item.id} className="history-item">
-              <div>
-                <strong>{item.date}</strong>
-                <p>{item.note}</p>
-              </div>
-              <span className="chip">{item.risk}</span>
-            </article>
-          ))}
-        </div>
+        {error ? <div className="form-error" style={{ marginTop: 16 }}>{error}</div> : null}
+        {loading ? <p className="helper-text" style={{ marginTop: 16 }}>Загрузка...</p> : null}
+        {!loading && !error ? (
+          items.length ? (
+            <div className="history-list">
+              {items.map((item) => (
+                <article key={item.id} className="history-item">
+                  <div>
+                    <strong>{new Date(item.date).toLocaleDateString("ru-RU", { day: "2-digit", month: "long" })}</strong>
+                    <p>{item.note}</p>
+                  </div>
+                  <span className="chip">{item.risk}</span>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="helper-text" style={{ marginTop: 16 }}>
+              Пока нет сохранённых результатов. Запустите анализ, чтобы история начала заполняться.
+            </p>
+          )
+        ) : null}
 
         <NavLink to="/analysis" className="primary-button inline-button">
           Перейти к анализу
@@ -467,15 +646,196 @@ function HistoryPage() {
   );
 }
 
+function ProtectedRoute({ session, loading, children }) {
+  const location = useLocation();
+  if (loading) return <div className="helper-text">Загрузка...</div>;
+  if (!session) return <Navigate to="/auth" replace state={{ from: location.pathname }} />;
+  return children;
+}
+
+function AnalysisLockedPage() {
+  return (
+    <div className="page page-active">
+      <div className="page-intro">
+        <h2>Анализ ухода</h2>
+        <p>Можете воспользоваться анализом после входа в аккаунт.</p>
+          <NavLink to="/auth" className="primary-button full-width" style={{ marginTop: 12 }}>
+            Зарегистрироваться / Войти
+          </NavLink>
+      </div>
+
+      <div className="analysis-steps" aria-label="Этапы анализа">
+        <section className="card stage-card">
+          <div className="stage-heading">
+            <div className="stage-badge" aria-hidden="true">
+              1
+            </div>
+            <div className="stage-title">
+              <div className="stage-kicker">
+                <Icon name="document" />
+                <span>Ввод данных</span>
+              </div>
+              <h2>Заполните данные</h2>
+            </div>
+          </div>
+          <p className="card-copy">
+            Тип кожи, симптомы и текущий уход — эти данные нужны, чтобы алгоритм сформировал
+            персональную рекомендацию.
+          </p>
+        </section>
+
+        <section className="card stage-card">
+          <div className="stage-heading">
+            <div className="stage-badge" aria-hidden="true">
+              2
+            </div>
+            <div className="stage-title">
+              <div className="stage-kicker">
+                <Icon name="warning" />
+                <span>Результат анализа</span>
+              </div>
+              <h2>Риск и рекомендация</h2>
+            </div>
+          </div>
+          <p className="card-copy">
+            После входа вы получите оценку риска перегрузки и план, что оставить и что временно
+            убрать.
+          </p>
+        </section>
+
+        <section className="card stage-card">
+          <div className="stage-heading">
+            <div className="stage-badge" aria-hidden="true">
+              3
+            </div>
+            <div className="stage-title">
+              <div className="stage-kicker">
+                <Icon name="check" />
+                <span>Минимальный уход</span>
+              </div>
+              <h2>Список шагов</h2>
+            </div>
+          </div>
+          <p className="card-copy">
+            Для сухой кожи — больше увлажнения и питания. Для жирной/комбинированной — лёгкие
+            текстуры и аккуратная частота активов.
+          </p>
+        </section>
+
+        <section className="card stage-card">
+          <div className="stage-heading">
+            <div className="stage-badge" aria-hidden="true">
+              4
+            </div>
+            <div className="stage-title">
+              <div className="stage-kicker">
+                <Icon name="history" />
+                <span>История</span>
+              </div>
+              <h2>Динамика</h2>
+            </div>
+          </div>
+          <p className="card-copy">
+            Результаты будут сохраняться в историю, чтобы вы видели прогресс и могли сравнивать
+            рекомендации.
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function AnalysisRoute({ session, loading }) {
+  if (loading) return <div className="helper-text">Загрузка...</div>;
+  if (!session) return <AnalysisLockedPage />;
+  return <AnalysisPage />;
+}
+
+function HistoryLockedPage() {
+  return (
+    <section className="narrow-page">
+      <div className="page-intro">
+        <h2>История анализов</h2>
+        <p>История будет доступна после входа.</p>
+      </div>
+
+      <div className="card history-card">
+        <div className="history-header">
+          <div className="empty-icon">
+            <Icon name="history" />
+          </div>
+          <div>
+            <h3>Сохранённые результаты</h3>
+            <p>После входа здесь появятся ваши прошлые анализы и динамика.</p>
+          </div>
+        </div>
+
+        <NavLink to="/auth" className="primary-button inline-button">
+          Зарегистрироваться / Войти
+          <Icon name="arrow" />
+        </NavLink>
+      </div>
+    </section>
+  );
+}
+
+function HistoryRoute({ session, loading }) {
+  if (loading) return <div className="helper-text">Загрузка...</div>;
+  if (!session) return <HistoryLockedPage />;
+  return <HistoryPage />;
+}
+
 export default function App() {
+  const [session, setSession] = useState(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
+  const [chatOpen, setChatOpen] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    setSessionLoading(true);
+    const request = apiMe();
+    request
+      .then((result) => {
+        if (!alive) return;
+        if (result.ok) setSession(result.user);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!alive) return;
+        setSessionLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!session) setChatOpen(false);
+  }, [session]);
+
+  const handleSignOut = () => {
+    apiLogout().catch(() => {});
+    setSession(null);
+  };
+
   return (
     <div className="app-shell">
-      <Header />
+      <Header session={session} onSignOut={handleSignOut} />
+      {session ? <ConsultChatPanel open={chatOpen} onClose={() => setChatOpen(false)} /> : null}
       <main className="container main-content">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/analysis" element={<AnalysisPage />} />
-          <Route path="/history" element={<HistoryPage />} />
+          <Route
+            path="/"
+            element={<HomePage session={session} onOpenAssistant={() => setChatOpen(true)} />}
+          />
+          <Route
+            path="/analysis"
+            element={
+              <AnalysisRoute session={session} loading={sessionLoading} />
+            }
+          />
+          <Route path="/history" element={<HistoryRoute session={session} loading={sessionLoading} />} />
+          <Route path="/auth" element={<AuthPage onSessionChange={setSession} />} />
         </Routes>
       </main>
     </div>
